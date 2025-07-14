@@ -37,6 +37,8 @@ include = [
     "src_py/magnethub/*.py",
     "src_py/magnethub/models/paderborn/*.pt",
     "src_py/magnethub/models/sydney/*.pt",
+    "src_py/magnethub/models/asu/*.json",
+    "src_py/magnethub/models/asu/*.sd",
     "tests",
     "requirements.txt"
 ]

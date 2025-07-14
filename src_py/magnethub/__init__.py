@@ -2,3 +2,4 @@
 import magnethub.loss
 import magnethub.paderborn
 import magnethub.sydney
+import magnethub.asu
