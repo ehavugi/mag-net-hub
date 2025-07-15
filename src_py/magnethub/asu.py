@@ -64,10 +64,7 @@ def model_run(net,waveshape,frequency,temperature):
     vectorized_nearest_value = np.vectorize(nearest_value)
 
     temperature = vectorized_nearest_value(temperature)
-    print(waveshape.shape,temperature.shape,frequency.shape)
     waveshape=waveshape.reshape((-1,1024))
-    print(waveshape.shape)
-
     fft_data = np.fft.fft(waveshape, axis=1)
     fft_data=scipy.fft.ifft(fft_data[:, :nparams],n=nparams, axis=1)
     Flux =np.abs(fft_data) 
@@ -98,20 +95,17 @@ def one_sample_predict(material,waveshape,frequency,temperature):
 
     net = Net().double().to(device)
 
-    net.load_state_dict(torch.load(f"models/asu/models/Model{material}.sd"))
+    net.load_state_dict(torch.load(f"models/asu/Model{material}.sd"))
     net.eval()
 
     return model_run(net,waveshape,frequency,temperature)
 
     
 class AsuModel:
-    """The Paderborn model.
+    """The ASU model.
 
-    HARDCORE: H-field and power loss estimation for arbitrary waveforms with residual,
-     dilated convolutional neural networks in ferrite cores
-    N Förster, W Kirchgässner, T Piepenbrock, O Schweins, O Wallscheid
-    arXiv preprint arXiv:2401.11488
-
+    E. Havugimana and M. Ranjram, “A Simple Data-Driven Machine Learning-based 
+    Software Package for Accurate Magnetic Core Loss Computation,” Oct. 2025.
     """
     
     expected_seq_len = 1024  # the expected sequence length
@@ -127,8 +121,6 @@ class AsuModel:
         assert (
             material in MAT2FILENAME.keys()
         ), f"Requested material '{material}' is not supported"
-        # self.b_limit = MAT_CONST_B_MAX[material]
-        # self.h_limit = MAT_CONST_H_MAX[material]
         self.predicts_p_directly = True
 
     def __call__(self, b_seq, frequency, temperature):
@@ -143,11 +135,13 @@ class AsuModel:
             The frequency operation point(s) in Hz
         temperature: scalar or 1D array-like
             The temperature operation point(s) in °C
-        
+            Closest temperature to 4 temperatures in magnet dataset is used.
+            Future interpolation changes planned
+
         Return
         ------
-        p, h: (X,) np.array, (X, Y) np.ndarray
-            The estimated power loss (p) in W/m³ and the estimated magnetic field strength (h) in A/m.
+        p, h: (X,) np.array, None
+            The estimated power loss (p) in W/m³ and  h is None
         """
         self.model.eval()
         p_pred=model_run(self.model,b_seq,frequency,temperature)
