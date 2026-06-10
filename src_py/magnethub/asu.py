@@ -5,7 +5,6 @@
 #      + with https://asumag.streamlit.app/ 
 #      + self-hosted : results from paderborn and sydney)
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy 
 import torch
@@ -157,7 +156,6 @@ if __name__ == "__main__":
     frequency=np.array([[100e3],[100e3]])
     pred=one_sample_predict(material,waveshape,frequency,temperature)
     print(pred/1e3,"kW/m^3")
-    # plt.show()
     mdl = AsuModel("models/asu/ModelN87.sd",material="N87")
 
     # dummy B field data (one trajectory with 1024 samples)
